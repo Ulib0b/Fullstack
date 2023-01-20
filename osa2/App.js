@@ -3,6 +3,10 @@ const Course = (props) => {
 
   const parts = course.parts
 
+  const total = parts.reduce(
+    (i,value) => i+value.exercises
+  ,0)
+
   return(
     <>
       <h1>{course.name}</h1>
@@ -12,6 +16,8 @@ const Course = (props) => {
             {part.name} {part.exercises}
           </li>
         )}
+
+        <li>Total amount of exercises {total}</li>
       </ul>
     </>
   )
