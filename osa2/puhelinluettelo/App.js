@@ -4,10 +4,12 @@ const App = () => {
   const [persons, setPersons] = useState([
     {
       name: 'Arto Hellas',
-      id: 1
+      id: 1,
+      number: "0432853259325"
     }
   ])
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState("")
 
   const addNimi = (event) => {
     event.preventDefault()
@@ -17,7 +19,8 @@ const App = () => {
     if (sama.length === 0) {
       const obj = {
         name: newName,
-        id: persons.length + 1
+        id: persons.length + 1,
+        number: newNumber
       }
 
       setPersons(persons.concat(obj))
@@ -27,10 +30,15 @@ const App = () => {
 
 
     setNewName("")
+    setNewNumber("")
   }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
+  }
+
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value)
   }
 
   return (
@@ -42,6 +50,14 @@ const App = () => {
             value={newName}
             onChange={handleNameChange}
           />
+          
+        </div>
+        <div>
+          number: <input 
+              type="number"
+              value={newNumber}
+              onChange={handleNumberChange}
+          />
         </div>
         <div>
           <button type="submit">add</button>
@@ -51,7 +67,7 @@ const App = () => {
       <ul>
         {persons.map(name =>
           <li key={name.id}>
-            {name.name}
+            {name.name} {name.number}
           </li>
         )}
       </ul>
