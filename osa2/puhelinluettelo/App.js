@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const Persons = (props) => {
 
@@ -22,8 +23,8 @@ const Form = (props) => {
   const handleNameChange = props.handleNameChange
   const handleNumberChange = props.handleNumberChange
 
-  
-  return(
+
+  return (
     <form onSubmit={addNimi}>
       <div>
         name: <input
@@ -44,17 +45,23 @@ const Form = (props) => {
       </div>
     </form>
   )
-  
+
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    {
-      name: 'Arto Hellas',
-      id: 1,
-      number: "0432853259325"
-    }
-  ])
+  const [persons, setPersons] = useState([])
+
+  useEffect(() => {
+    const lista = axios.get("http://localhost:3001/persons")
+
+    lista.then(response => {      
+      setPersons(response.data)
+    })
+  },[])
+
+  
+
+
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState("")
 
@@ -91,12 +98,12 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Form 
-      newName={newName} 
-      newNumber={newNumber} 
-      addNimi={addNimi} 
-      handleNameChange={handleNameChange}
-      handleNumberChange={handleNumberChange}
+      <Form
+        newName={newName}
+        newNumber={newNumber}
+        addNimi={addNimi}
+        handleNameChange={handleNameChange}
+        handleNumberChange={handleNumberChange}
       >
       </Form>
       <h2>Numbers</h2>
