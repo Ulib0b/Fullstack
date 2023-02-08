@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import personComms from './persons'
 
 const Persons = (props) => {
 
@@ -9,6 +9,7 @@ const Persons = (props) => {
       {persons.map(name =>
         <li key={name.id}>
           {name.name} {name.number}
+          <button id={name.id} onClick={props.handleDeletePerson(name.id)}>Delete</button>
         </li>
       )}
     </ul>
@@ -52,14 +53,14 @@ const App = () => {
   const [persons, setPersons] = useState([])
 
   useEffect(() => {
-    const lista = axios.get("http://localhost:3001/persons")
+    personComms
+      .getAll()
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
 
-    lista.then(response => {      
-      setPersons(response.data)
-    })
-  },[])
 
-  
 
 
   const [newName, setNewName] = useState('')
@@ -73,11 +74,15 @@ const App = () => {
     if (sama.length === 0) {
       const obj = {
         name: newName,
-        id: persons.length + 1,
+        id: persons[persons.length]+1,
         number: newNumber
       }
 
-      setPersons(persons.concat(obj))
+      personComms
+        .addPerson(obj)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+        })
     } else {
       alert(`${newName} on jo lisätty`)
     }
@@ -86,6 +91,16 @@ const App = () => {
     setNewName("")
     setNewNumber("")
   }
+
+  const handleDeletePerson = (id) => {
+    return () => {
+      personComms
+      .deletePerson(id)
+      .then(
+        setPersons(persons.filter(n => n.id !== id)))
+    }
+  }
+
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -107,7 +122,7 @@ const App = () => {
       >
       </Form>
       <h2>Numbers</h2>
-      <Persons persons={persons}></Persons>
+      <Persons persons={persons} handleDeletePerson={handleDeletePerson}></Persons>
     </div>
   )
 
