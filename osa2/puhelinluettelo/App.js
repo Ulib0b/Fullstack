@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import personComms from './persons'
+import './index.css'
 
 const Persons = (props) => {
 
@@ -49,6 +50,30 @@ const Form = (props) => {
 
 }
 
+const NimiAlert = ({nimi}) => {
+  if(nimi === null){
+    return null
+  }
+
+  return (
+    <div className="successful">
+      {nimi} lisätty
+    </div>
+  )
+}
+
+const PoistoAlert = ({nimi}) => {
+  if(nimi === null){
+    return null
+  }
+
+  return (
+    <div className="successful">
+      {nimi} poistettu
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
 
@@ -65,6 +90,9 @@ const App = () => {
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState("")
+  const [nimi, setNimi] = useState(null)
+  const [poistettuNimi, setPoistettuNimi] = useState(null)
+  
 
   const addNimi = (event) => {
     event.preventDefault()
@@ -83,6 +111,8 @@ const App = () => {
         .then(response => {
           setPersons(persons.concat(response.data))
         })
+      
+        setNimi(newName)
     } else {
       alert(`${newName} on jo lisätty`)
     }
@@ -90,14 +120,34 @@ const App = () => {
 
     setNewName("")
     setNewNumber("")
+    setTimeout(()=>{
+      setNimi(null)
+    },5000)
   }
 
   const handleDeletePerson = (id) => {
+
+    
     return () => {
+      personComms.getAll().then(response => {
+        for (let i = 0; i < response.data.length; i++) {
+          if(id==response.data[i].id){
+            setPoistettuNimi(response.data[i].name)
+          }
+          
+        }
+      })
+      
+
       personComms
       .deletePerson(id)
       .then(
-        setPersons(persons.filter(n => n.id !== id)))
+        setPersons(persons.filter(n => n.id !== id))
+      )
+
+      setTimeout(()=>{
+        setPoistettuNimi(null)
+      },5000)
     }
   }
 
@@ -113,6 +163,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <NimiAlert nimi={nimi}></NimiAlert>
+      <PoistoAlert nimi={poistettuNimi}></PoistoAlert>
       <Form
         newName={newName}
         newNumber={newNumber}
