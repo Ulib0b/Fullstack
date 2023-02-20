@@ -1,7 +1,10 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
 
 app.use(express.json())
+
+app.use(morgan('tiny'))
 
 let persons = [
   {
@@ -34,10 +37,16 @@ let persons = [
 app.get('/info', (request, response) => {
   const date = new Date();
   response.send(`<p>Phonebook has info for ${persons.length} people </p>` + date)
+  morgan.token('log',(req,res)=>{
+    return req.body
+  })
 })
 
 app.get('/api/persons', (request, response) => {
   response.json(persons)
+  morgan.token('log',(req,res)=>{
+    return req.body
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -49,11 +58,17 @@ app.get('/api/persons/:id', (request, response) => {
     response.status(404).end()
   }
   
+  morgan.token('log',(req,res)=>{
+    return req.body
+  })
 })
 
 app.delete('/api/persons/:id',(request, response) => {
   const id = Number(request.params.id)
   persons = persons.filter(person => person.id !== id)
+  morgan.token('log',(req,res)=>{
+    return req.body
+  })
 
   response.status(204).end()
 })
@@ -79,6 +94,11 @@ app.post('/api/persons', (request, response) => {
   persons = persons.concat(person)
 
   response.json(persons)
+
+  morgan.token('log',(req,res)=>{
+    return req.body
+  })
+  
 
 })
 
