@@ -1,10 +1,13 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
+const cors = require('cors')
 
 app.use(express.json())
 
 app.use(morgan('tiny'))
+
+app.use(cors())
 
 let persons = [
   {
@@ -85,15 +88,9 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({error: "nimi on jo luettelossa"})
   }
   
-  const person = {
-    "name": request.body.name,
-    "id": Math.floor(Math.random() * 1000),
-    "number": request.body.number
-  }
+  persons = persons.concat(request.body)
 
-  persons = persons.concat(person)
-
-  response.json(persons)
+  response.json(request.body)
 
   morgan.token('log',(req,res)=>{
     return req.body
